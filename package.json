@@ -1,23 +1,23 @@
 {
-  "name": "twitter-download-original-image",
-  "version": "1.1.6",
-  "description": "Google Chrome 拡張機能。Twitter Web App (twitter.com) のツイート内画像を右クリックした際に「画像をオリジナルサイズで保存」メニューを表示します。",
+  "name": "x-image-sorter",
+  "version": "1.0.0",
+  "description": "X(Twitter) のツイート画像を投稿者ごとのフォルダに保存する Chrome 拡張機能",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Y-dash/twitter-download-original-image.git"
+    "url": "git+https://github.com/anocth/x-image-sorter.git"
   },
-  "author": "Y-dash",
+  "author": "anocth",
   "license": "CC-BY-NC-SA-4.0",
   "bugs": {
-    "url": "https://github.com/Y-dash/twitter-download-original-image/issues"
+    "url": "https://github.com/anocth/x-image-sorter/issues"
   },
-  "homepage": "https://github.com/Y-dash/twitter-download-original-image#readme",
+  "homepage": "https://github.com/anocth/x-image-sorter#readme",
   "devDependencies": {
-    "@types/chrome": "0.0.123",
+    "@types/chrome": "*",
     "gulp": "^4.0.2",
     "gulp-plumber": "^1.2.1",
-    "gulp-uglify": "^3.0.2",
+    "gulp-terser": "^2.1.0",
     "gulp-zip": "^5.0.2",
-    "typescript": "^4.0.3"
+    "typescript": "^5.0.0"
   }
 }

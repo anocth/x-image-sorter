@@ -1,14 +1,14 @@
 {
 	"manifest_version": 3,
-	"name": "Twitter, Download Original Image",
-	"version": "1.1.6",
-	"description": "Twitter Web App (twitter.com) のツイート内画像を右クリックした際に「画像をオリジナルサイズで保存」メニューを表示します。",
+	"name": "X Image Sorter",
+	"version": "1.0.0",
+	"description": "X(Twitter) のツイート画像を右クリックして投稿者ごとのフォルダにオリジナルサイズで保存します。",
 	"icons": {
 		"16": "icons/icon16.png",
 		"48": "icons/icon48.png",
 		"128": "icons/icon128.png"
 	},
-	"author": "Y-dash",
+	"author": "anocth",
 	"permissions": [
 		"contextMenus",
 		"downloads"
@@ -18,5 +18,10 @@
 	],
 	"background": {
 		"service_worker": "scripts/event.js"
-	}
+	},
+	"content_scripts": [{
+		"matches": ["*://twitter.com/*", "*://x.com/*"],
+		"js": ["scripts/content.js"],
+		"run_at": "document_idle"
+	}]
 }

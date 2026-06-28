@@ -1,5 +1,5 @@
 let gulp = require('gulp');
-let uglify = require('gulp-uglify');
+let terser = require('gulp-terser');
 let plumber = require('gulp-plumber');
 let zip = require('gulp-zip');
 
@@ -16,7 +16,7 @@ const ZIP_DIST_PATH = './';
 gulp.task(JAVASCRIPT_TASK, (done) => {
 	gulp.src(JAVASCRIPT_SRC_PATH)
 		.pipe(plumber())
-		.pipe(uglify())
+		.pipe(terser({ ecma: 2020 }))
 		.pipe(gulp.dest(JAVASCRIPT_DIST_PATH));
 	done();
 });
