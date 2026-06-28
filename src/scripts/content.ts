@@ -44,16 +44,25 @@ document.addEventListener('contextmenu', (e) => {
 	}
 
 	// 画像拡大プレビュー: URLパターン /username/status/.../photo/N からユーザ名を取得
-	// プレビュー画面では data-testid="UserName"（ハイフンなし）が使われる
 	const photoMatch = window.location.pathname.match(/^\/([A-Za-z0-9_]+)\/status\/\d+\/photo\/\d+$/);
 	if (photoMatch) {
 		lastUsername = photoMatch[1];
 		lastDisplayNameExpected = true;
-		const userNameEl = document.querySelector('[data-testid="UserName"]');
-		if (userNameEl) {
-			const full = userNameEl.textContent?.trim() ?? '';
-			const suffix = `@${lastUsername}`;
+		const suffix = `@${lastUsername}`;
+		// プロフィールページから開いた場合: UserName（ハイフンなし）
+		const profileEl = document.querySelector('[data-testid="UserName"]');
+		if (profileEl) {
+			const full = profileEl.textContent?.trim() ?? '';
 			lastDisplayName = full.slice(0, full.length - suffix.length).trim() || null;
+		} else {
+			// タイムラインから開いた場合: ユーザへのリンクを含む User-Name（ハイフンあり）を探す
+			for (const el of document.querySelectorAll('[data-testid="User-Name"]')) {
+				if (el.querySelector(`a[href="/${lastUsername}"]`)) {
+					const full = el.textContent?.trim() ?? '';
+					lastDisplayName = full.slice(0, full.length - suffix.length).trim() || null;
+					break;
+				}
+			}
 		}
 	}
 });
