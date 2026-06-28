@@ -9,6 +9,12 @@ const JAVASCRIPT_DIST_PATH = 'dist/scripts';
 const COPY_TASK = 'copy';
 const COPY_SRC_PATH = ['src/manifest.json', 'src/icons/*'];
 const COPY_DIST_PATH = 'dist';
+const POPUP_JS_TASK = 'popupJs';
+const POPUP_JS_SRC_PATH = '.intermediate/popup/*.js';
+const POPUP_JS_DIST_PATH = 'dist/popup';
+const COPY_POPUP_TASK = 'copyPopup';
+const COPY_POPUP_SRC_PATH = 'src/popup/*.html';
+const COPY_POPUP_DIST_PATH = 'dist/popup';
 const ZIP_TASK = 'zip';
 const ZIP_SRC_PATH = 'dist/**/*';
 const ZIP_DIST_PATH = './';
@@ -28,6 +34,21 @@ gulp.task(COPY_TASK, (done) => {
 	done();
 });
 
+gulp.task(POPUP_JS_TASK, (done) => {
+	gulp.src(POPUP_JS_SRC_PATH)
+		.pipe(plumber())
+		.pipe(terser({ ecma: 2020 }))
+		.pipe(gulp.dest(POPUP_JS_DIST_PATH));
+	done();
+});
+
+gulp.task(COPY_POPUP_TASK, (done) => {
+	gulp.src(COPY_POPUP_SRC_PATH)
+		.pipe(plumber())
+		.pipe(gulp.dest(COPY_POPUP_DIST_PATH));
+	done();
+});
+
 gulp.task(ZIP_TASK, (done) => {
 	gulp.src(ZIP_SRC_PATH)
 		.pipe(zip('release.zip'))
@@ -38,5 +59,7 @@ gulp.task(ZIP_TASK, (done) => {
 gulp.task('default', (done) => {
 	gulp.watch(JAVASCRIPT_SRC_PATH, gulp.parallel(JAVASCRIPT_TASK));
 	gulp.watch(COPY_SRC_PATH, gulp.parallel(COPY_TASK));
+	gulp.watch(POPUP_JS_SRC_PATH, gulp.parallel(POPUP_JS_TASK));
+	gulp.watch(COPY_POPUP_SRC_PATH, gulp.parallel(COPY_POPUP_TASK));
 	done();
 });

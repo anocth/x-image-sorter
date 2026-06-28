@@ -11,8 +11,13 @@
 	"author": "anocth",
 	"permissions": [
 		"contextMenus",
-		"downloads"
+		"downloads",
+		"notifications",
+		"storage"
 	],
+	"action": {
+		"default_popup": "popup/popup.html"
+	},
 	"host_permissions": [
 		"*://pbs.twimg.com/*"
 	],
