@@ -42,6 +42,20 @@ document.addEventListener('contextmenu', (e) => {
 			}
 		}
 	}
+
+	// 画像拡大プレビュー: URLパターン /username/status/.../photo/N からユーザ名を取得
+	// プレビュー画面では data-testid="UserName"（ハイフンなし）が使われる
+	const photoMatch = window.location.pathname.match(/^\/([A-Za-z0-9_]+)\/status\/\d+\/photo\/\d+$/);
+	if (photoMatch) {
+		lastUsername = photoMatch[1];
+		lastDisplayNameExpected = true;
+		const userNameEl = document.querySelector('[data-testid="UserName"]');
+		if (userNameEl) {
+			const full = userNameEl.textContent?.trim() ?? '';
+			const suffix = `@${lastUsername}`;
+			lastDisplayName = full.slice(0, full.length - suffix.length).trim() || null;
+		}
+	}
 });
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
