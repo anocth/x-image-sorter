@@ -80,10 +80,23 @@ async function download(targetSrc: URL, tabId: number): Promise<void> {
 	}
 
 	const baseName = `${targetSrc.pathname.replace('/media/', '')}_${targetSrc.searchParams.get('name')}.${targetSrc.searchParams.get('format')}`;
+
+	// 同名ファイルが既にディスク上に存在するか（Chrome のダウンロード履歴 + exists:true で判定）
+	const existed = (await chrome.downloads.search({
+		filenameRegex: escapeRegex(baseName),
+		exists: true,
+		state: 'complete'
+	})).length > 0;
+
 	chrome.downloads.download({
 		url: targetSrc.toString(),
-		filename: `${ROOT_FOLDER}/${user}/${baseName}`
+		filename: `${ROOT_FOLDER}/${user}/${baseName}`,
+		conflictAction: 'overwrite'
 	});
+
+	if (existed) {
+		notify('上書きしました', baseName);
+	}
 
 	if (user === '_unknown') {
 		notify('Failed to get username', 'The DOM structure may have changed');
@@ -99,6 +112,10 @@ async function download(targetSrc: URL, tabId: number): Promise<void> {
 			downloadProfileJson(user, updated);
 		}
 	}
+}
+
+function escapeRegex(s: string): string {
+	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function notify(title: string, message: string): void {
