@@ -23,6 +23,29 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 
+// 自拡張が開始したダウンロードの保存先（URL → filename）
+const pendingFilenames = new Map<string, string>();
+
+// 他の拡張機能が onDeterminingFilename でファイル名を書き換えると
+// download() の filename が無視されて Downloads 直下に保存されるため、ここで改めて指定する
+chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
+	if (item.byExtensionId !== chrome.runtime.id) return;
+	const filename = pendingFilenames.get(item.url);
+	if (!filename) return;
+	pendingFilenames.delete(item.url);
+	suggest({ filename, conflictAction: 'overwrite' });
+});
+
+function startDownload(url: string, filename: string): void {
+	pendingFilenames.set(url, filename);
+	chrome.downloads.download({
+		url,
+		filename,
+		conflictAction: 'overwrite',
+		saveAs: false
+	});
+}
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
 	if (info.srcUrl && info.menuItemId === CONTEXT_ID && tab?.id != null) {
 		callDownload(new URL(info.srcUrl), tab.id);
@@ -88,11 +111,7 @@ async function download(targetSrc: URL, tabId: number): Promise<void> {
 		state: 'complete'
 	})).length > 0;
 
-	chrome.downloads.download({
-		url: targetSrc.toString(),
-		filename: `${ROOT_FOLDER}/${user}/${baseName}`,
-		conflictAction: 'overwrite'
-	});
+	startDownload(targetSrc.toString(), `${ROOT_FOLDER}/${user}/${baseName}`);
 
 	if (existed) {
 		notify('上書きしました', baseName);
@@ -148,10 +167,5 @@ async function saveProfile(username: string, displayName: string): Promise<Profi
 function downloadProfileJson(username: string, profile: Profile): void {
 	const payload = JSON.stringify({ username, ...profile }, null, 2);
 	const url = `data:application/json;charset=utf-8,${encodeURIComponent(payload)}`;
-	chrome.downloads.download({
-		url,
-		filename: `${ROOT_FOLDER}/${username}/profile.json`,
-		conflictAction: 'overwrite',
-		saveAs: false
-	});
+	startDownload(url, `${ROOT_FOLDER}/${username}/profile.json`);
 }
